@@ -298,28 +298,9 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     processed_proj_fns = pd.read_csv(os.path.join(output_dir, "all_fns.csv"), low_memory=False)
     processed_proj_vars = pd.read_csv(os.path.join(output_dir, "all_vars.csv"), low_memory=False)
 
-    # Split the processed files into train, validation and test sets
-    if all(processed_proj_fns['set'].isin(['train', 'valid', 'test'])) and \
-      all(processed_proj_vars['set'].isin(['train', 'valid', 'test'])):
-        logger.info("Found the sets split in the input dataset")
-    #    train_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'train']
-    #    valid_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'valid']
-        test_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'test']
-    #
-    #    train_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'train']
-    #    valid_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'valid']
-        # @Beacon @Question only defined in this branch??? what?
-        test_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'test']
-    #
-    else:
-        logger.info("Splitting sets randomly")
-        # NOTE: for predicting the types of a single project, we want zero training files (since we are going to use
-        # a pre-trained model (created with type4py on the branch 'adaption')) and 100% "testing" files
-        # train_files, test_files = \
-        #     train_test_split(pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file']), test_size=1)
-        test_files = pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file'])
-        # train_files, valid_files = \
-        #     train_test_split(pd.DataFrame(processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]['file'].unique(), columns=['file']), test_size=1)
+    # Everything is part of the "test" set (no splitting into train, validation and test)
+    test_files = pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file'])
+    test_files_vars = pd.DataFrame(processed_proj_vars['file'].unique(), columns=['file'])
 
     # df_train = processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]
     # logger.info(f"No. of functions in train set: {df_train.shape[0]:,}")
