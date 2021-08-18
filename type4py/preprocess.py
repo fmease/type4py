@@ -301,14 +301,15 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     # Split the processed files into train, validation and test sets
     if all(processed_proj_fns['set'].isin(['train', 'valid', 'test'])) and \
       all(processed_proj_vars['set'].isin(['train', 'valid', 'test'])):
-       logger.info("Found the sets split in the input dataset")
+        logger.info("Found the sets split in the input dataset")
     #    train_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'train']
     #    valid_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'valid']
-       test_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'test']
+        test_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'test']
     #
     #    train_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'train']
     #    valid_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'valid']
-       test_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'test']
+        # @Beacon @Question only defined in this branch??? what?
+        test_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'test']
     #
     else:
         logger.info("Splitting sets randomly")
@@ -331,8 +332,8 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     # logger.info(f"No. of variables in train set: {df_var_train.shape[0]:,}")
     # df_var_valid = processed_proj_vars[processed_proj_vars['file'].isin(valid_files_vars.to_numpy().flatten())]
     # logger.info(f"No. of variables in validation set: {df_var_valid.shape[0]:,}")
-    # df_var_test = processed_proj_vars[processed_proj_vars['file'].isin(test_files_vars.to_numpy().flatten())]
-    # logger.info(f"No. of variables in test set: {df_var_test.shape[0]:,}")
+    df_var_test = processed_proj_vars[processed_proj_vars['file'].isin(test_files_vars.to_numpy().flatten())]
+    logger.info(f"No. of variables in test set: {df_var_test.shape[0]:,}")
 
     # assert list(set(df_train['file'].tolist()).intersection(set(df_test['file'].tolist()))) == []
     # assert list(set(df_train['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
@@ -392,15 +393,12 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     # Visible type hints
     if exists(join(output_dir, 'MT4Py_VTHs.csv')):
         logger.info("Using visible type hints")
-        processed_proj_fns_params, processed_proj_fns = encode_aval_types(processed_proj_fns_params, processed_proj_fns,
-                                                                          processed_proj_vars,
-                                                                          pd.read_csv(join(output_dir, 'MT4Py_VTHs.csv')).head(AVAILABLE_TYPES_NUMBER))
+        df_types = pd.read_csv(join(output_dir, 'MT4Py_VTHs.csv')).head(AVAILABLE_TYPES_NUMBER)
     else:
         logger.info("Using naive available type hints")
         df_types = gen_most_frequent_avl_types(os.path.join(output_dir, "extracted_visible_types"), output_dir, AVAILABLE_TYPES_NUMBER)
-        processed_proj_fns_params, processed_proj_fns = encode_aval_types(processed_proj_fns_params, processed_proj_fns,
-                                                                        processed_proj_vars, df_types)
-
+    
+    processed_proj_fns_params, processed_proj_fns = encode_aval_types(processed_proj_fns_params, processed_proj_fns, processed_proj_vars, df_types)
     # Split parameters and returns type dataset by file into a train and test sets
     # df_params_train = processed_proj_fns_params[processed_proj_fns_params['file'].isin(train_files.to_numpy().flatten())]
     # df_params_valid = processed_proj_fns_params[processed_proj_fns_params['file'].isin(valid_files.to_numpy().flatten())]
