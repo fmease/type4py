@@ -299,43 +299,44 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     processed_proj_vars = pd.read_csv(os.path.join(output_dir, "all_vars.csv"), low_memory=False)
 
     # Split the processed files into train, validation and test sets
-    #if all(processed_proj_fns['set'].isin(['train', 'valid', 'test'])) and \
-    #   all(processed_proj_vars['set'].isin(['train', 'valid', 'test'])):
-    #    logger.info("Found the sets split in the input dataset")
+    if all(processed_proj_fns['set'].isin(['train', 'valid', 'test'])) and \
+      all(processed_proj_vars['set'].isin(['train', 'valid', 'test'])):
+       logger.info("Found the sets split in the input dataset")
     #    train_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'train']
     #    valid_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'valid']
-    #    test_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'test']
+       test_files = processed_proj_fns['file'][processed_proj_fns['set'] == 'test']
     #
     #    train_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'train']
     #    valid_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'valid']
-    #    test_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'test']
+       test_files_vars = processed_proj_vars['file'][processed_proj_vars['set'] == 'test']
     #
-    # else:
-    #    logger.info("Splitting sets randomly")
-    # NOTE: for predicting the types of a single project, we want zero training files (since we are going to use
-    # a pre-trained model (created with type4py on the branch 'adaption')) and 100% "testing" files
-    train_files, test_files = \
-        train_test_split(pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file']), test_size=1)
-    train_files, valid_files = \
-        train_test_split(pd.DataFrame(processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]['file'].unique(), columns=['file']), test_size=1)
+    else:
+        logger.info("Splitting sets randomly")
+        # NOTE: for predicting the types of a single project, we want zero training files (since we are going to use
+        # a pre-trained model (created with type4py on the branch 'adaption')) and 100% "testing" files
+        # train_files, test_files = \
+        #     train_test_split(pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file']), test_size=1)
+        test_files = pd.DataFrame(processed_proj_fns['file'].unique(), columns=['file'])
+        # train_files, valid_files = \
+        #     train_test_split(pd.DataFrame(processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]['file'].unique(), columns=['file']), test_size=1)
 
-    df_train = processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]
-    logger.info(f"No. of functions in train set: {df_train.shape[0]:,}")
-    df_valid = processed_proj_fns[processed_proj_fns['file'].isin(valid_files.to_numpy().flatten())]
-    logger.info(f"No. of functions in validation set: {df_valid.shape[0]:,}")
+    # df_train = processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]
+    # logger.info(f"No. of functions in train set: {df_train.shape[0]:,}")
+    # df_valid = processed_proj_fns[processed_proj_fns['file'].isin(valid_files.to_numpy().flatten())]
+    # logger.info(f"No. of functions in validation set: {df_valid.shape[0]:,}")
     df_test = processed_proj_fns[processed_proj_fns['file'].isin(test_files.to_numpy().flatten())]
     logger.info(f"No. of functions in test set: {df_test.shape[0]:,}")
 
-    df_var_train = processed_proj_vars[processed_proj_vars['file'].isin(train_files_vars.to_numpy().flatten())]
-    logger.info(f"No. of variables in train set: {df_var_train.shape[0]:,}")
-    df_var_valid = processed_proj_vars[processed_proj_vars['file'].isin(valid_files_vars.to_numpy().flatten())]
-    logger.info(f"No. of variables in validation set: {df_var_valid.shape[0]:,}")
-    df_var_test = processed_proj_vars[processed_proj_vars['file'].isin(test_files_vars.to_numpy().flatten())]
-    logger.info(f"No. of variables in test set: {df_var_test.shape[0]:,}")
+    # df_var_train = processed_proj_vars[processed_proj_vars['file'].isin(train_files_vars.to_numpy().flatten())]
+    # logger.info(f"No. of variables in train set: {df_var_train.shape[0]:,}")
+    # df_var_valid = processed_proj_vars[processed_proj_vars['file'].isin(valid_files_vars.to_numpy().flatten())]
+    # logger.info(f"No. of variables in validation set: {df_var_valid.shape[0]:,}")
+    # df_var_test = processed_proj_vars[processed_proj_vars['file'].isin(test_files_vars.to_numpy().flatten())]
+    # logger.info(f"No. of variables in test set: {df_var_test.shape[0]:,}")
 
-    assert list(set(df_train['file'].tolist()).intersection(set(df_test['file'].tolist()))) == []
-    assert list(set(df_train['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
-    assert list(set(df_test['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
+    # assert list(set(df_train['file'].tolist()).intersection(set(df_test['file'].tolist()))) == []
+    # assert list(set(df_train['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
+    # assert list(set(df_test['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
 
     # Exclude variables without a type
     processed_proj_vars = filter_var_wo_type(processed_proj_vars)
@@ -401,44 +402,44 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
                                                                         processed_proj_vars, df_types)
 
     # Split parameters and returns type dataset by file into a train and test sets
-    df_params_train = processed_proj_fns_params[processed_proj_fns_params['file'].isin(train_files.to_numpy().flatten())]
-    df_params_valid = processed_proj_fns_params[processed_proj_fns_params['file'].isin(valid_files.to_numpy().flatten())]
+    # df_params_train = processed_proj_fns_params[processed_proj_fns_params['file'].isin(train_files.to_numpy().flatten())]
+    # df_params_valid = processed_proj_fns_params[processed_proj_fns_params['file'].isin(valid_files.to_numpy().flatten())]
     df_params_test = processed_proj_fns_params[processed_proj_fns_params['file'].isin(test_files.to_numpy().flatten())]
 
-    df_ret_train = processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]
-    df_ret_valid = processed_proj_fns[processed_proj_fns['file'].isin(valid_files.to_numpy().flatten())]
+    # df_ret_train = processed_proj_fns[processed_proj_fns['file'].isin(train_files.to_numpy().flatten())]
+    # df_ret_valid = processed_proj_fns[processed_proj_fns['file'].isin(valid_files.to_numpy().flatten())]
     df_ret_test = processed_proj_fns[processed_proj_fns['file'].isin(test_files.to_numpy().flatten())]
 
-    df_var_train = processed_proj_vars[processed_proj_vars['file'].isin(train_files_vars.to_numpy().flatten())]
-    df_var_valid = processed_proj_vars[processed_proj_vars['file'].isin(valid_files_vars.to_numpy().flatten())]
+    # df_var_train = processed_proj_vars[processed_proj_vars['file'].isin(train_files_vars.to_numpy().flatten())]
+    # df_var_valid = processed_proj_vars[processed_proj_vars['file'].isin(valid_files_vars.to_numpy().flatten())]
     df_var_test = processed_proj_vars[processed_proj_vars['file'].isin(test_files_vars.to_numpy().flatten())]
 
 
-    assert list(set(df_params_train['file'].tolist()).intersection(set(df_params_test['file'].tolist()))) == []
-    assert list(set(df_params_train['file'].tolist()).intersection(set(df_params_valid['file'].tolist()))) == []
-    assert list(set(df_params_test['file'].tolist()).intersection(set(df_params_valid['file'].tolist()))) == []
+    # assert list(set(df_params_train['file'].tolist()).intersection(set(df_params_test['file'].tolist()))) == []
+    # assert list(set(df_params_train['file'].tolist()).intersection(set(df_params_valid['file'].tolist()))) == []
+    # assert list(set(df_params_test['file'].tolist()).intersection(set(df_params_valid['file'].tolist()))) == []
 
-    assert list(set(df_ret_train['file'].tolist()).intersection(set(df_ret_test['file'].tolist()))) == []
-    assert list(set(df_ret_train['file'].tolist()).intersection(set(df_ret_valid['file'].tolist()))) == []
-    assert list(set(df_ret_test['file'].tolist()).intersection(set(df_ret_valid['file'].tolist()))) == []
+    # assert list(set(df_ret_train['file'].tolist()).intersection(set(df_ret_test['file'].tolist()))) == []
+    # assert list(set(df_ret_train['file'].tolist()).intersection(set(df_ret_valid['file'].tolist()))) == []
+    # assert list(set(df_ret_test['file'].tolist()).intersection(set(df_ret_valid['file'].tolist()))) == []
 
-    assert list(set(df_var_train['file'].tolist()).intersection(set(df_var_test['file'].tolist()))) == []
-    assert list(set(df_var_train['file'].tolist()).intersection(set(df_var_valid['file'].tolist()))) == []
-    assert list(set(df_var_test['file'].tolist()).intersection(set(df_var_valid['file'].tolist()))) == []
+    # assert list(set(df_var_train['file'].tolist()).intersection(set(df_var_test['file'].tolist()))) == []
+    # assert list(set(df_var_train['file'].tolist()).intersection(set(df_var_valid['file'].tolist()))) == []
+    # assert list(set(df_var_test['file'].tolist()).intersection(set(df_var_valid['file'].tolist()))) == []
 
     # Store the dataframes and the label encoders
     logger.info("Saving preprocessed functions on the disk...")
     with open(os.path.join(output_dir, "label_encoder_all.pkl"), 'wb') as file:
         pickle.dump(le_all, file)
     
-    df_params_train.to_csv(os.path.join(output_dir, "_ml_param_train.csv"), index=False)
-    df_params_valid.to_csv(os.path.join(output_dir, "_ml_param_valid.csv"), index=False)
+    # df_params_train.to_csv(os.path.join(output_dir, "_ml_param_train.csv"), index=False)
+    # df_params_valid.to_csv(os.path.join(output_dir, "_ml_param_valid.csv"), index=False)
     df_params_test.to_csv(os.path.join(output_dir, "_ml_param_test.csv"), index=False)
 
-    df_ret_train.to_csv(os.path.join(output_dir, "_ml_ret_train.csv"), index=False)
-    df_ret_valid.to_csv(os.path.join(output_dir, "_ml_ret_valid.csv"), index=False)
+    # df_ret_train.to_csv(os.path.join(output_dir, "_ml_ret_train.csv"), index=False)
+    # df_ret_valid.to_csv(os.path.join(output_dir, "_ml_ret_valid.csv"), index=False)
     df_ret_test.to_csv(os.path.join(output_dir, "_ml_ret_test.csv"), index=False)
 
-    df_var_train.to_csv(os.path.join(output_dir, "_ml_var_train.csv"), index=False)
-    df_var_valid.to_csv(os.path.join(output_dir, "_ml_var_valid.csv"), index=False)
+    # df_var_train.to_csv(os.path.join(output_dir, "_ml_var_train.csv"), index=False)
+    # df_var_valid.to_csv(os.path.join(output_dir, "_ml_var_valid.csv"), index=False)
     df_var_test.to_csv(os.path.join(output_dir, "_ml_var_test.csv"), index=False)
