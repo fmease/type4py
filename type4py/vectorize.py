@@ -281,15 +281,15 @@ def vectorize_args_ret(output_path: str):
     Creates vector representation of functions' arguments and return values
     """
 
-    train_param_df = pd.read_csv(os.path.join(output_path, "_ml_param_train.csv"), na_filter=False)
-    train_return_df = pd.read_csv(os.path.join(output_path, "_ml_ret_train.csv"), na_filter=False)
-    train_var_df = pd.read_csv(os.path.join(output_path, "_ml_var_train.csv"), na_filter=False)
-    logger.info("Loaded the training data")
+    # train_param_df = pd.read_csv(os.path.join(output_path, "_ml_param_train.csv"), na_filter=False)
+    # train_return_df = pd.read_csv(os.path.join(output_path, "_ml_ret_train.csv"), na_filter=False)
+    # train_var_df = pd.read_csv(os.path.join(output_path, "_ml_var_train.csv"), na_filter=False)
+    # logger.info("Loaded the training data")
 
-    valid_param_df = pd.read_csv(os.path.join(output_path, "_ml_param_valid.csv"), na_filter=False)
-    valid_return_df = pd.read_csv(os.path.join(output_path, "_ml_ret_valid.csv"), na_filter=False)
-    valid_var_df = pd.read_csv(os.path.join(output_path, "_ml_var_valid.csv"), na_filter=False)
-    logger.info("Loaded the validation data")
+    # valid_param_df = pd.read_csv(os.path.join(output_path, "_ml_param_valid.csv"), na_filter=False)
+    # valid_return_df = pd.read_csv(os.path.join(output_path, "_ml_ret_valid.csv"), na_filter=False)
+    # valid_var_df = pd.read_csv(os.path.join(output_path, "_ml_var_valid.csv"), na_filter=False)
+    # logger.info("Loaded the validation data")
 
     test_param_df = pd.read_csv(os.path.join(output_path, "_ml_param_test.csv"), na_filter=False)
     test_return_df = pd.read_csv(os.path.join(output_path, "_ml_ret_test.csv"), na_filter=False)
@@ -297,7 +297,7 @@ def vectorize_args_ret(output_path: str):
     logger.info("Loaded the test data")
 
     if not os.path.exists(os.path.join(output_path, 'w2v_token_model.bin')):
-        embedder = W2VEmbedding(train_param_df, train_return_df, train_var_df,
+        embedder = W2VEmbedding(test_param_df, test_return_df, test_var_df,
                                 os.path.join(output_path, 'w2v_token_model.bin'))
         embedder.train_token_model()
     else:
@@ -307,8 +307,8 @@ def vectorize_args_ret(output_path: str):
 
     # Create dirs for vectors
     mk_dir_not_exist(os.path.join(output_path, "vectors"))
-    mk_dir_not_exist(os.path.join(output_path, "vectors", "train"))
-    mk_dir_not_exist(os.path.join(output_path, "vectors", "valid"))
+    # mk_dir_not_exist(os.path.join(output_path, "vectors", "train"))
+    # mk_dir_not_exist(os.path.join(output_path, "vectors", "valid"))
     mk_dir_not_exist(os.path.join(output_path, "vectors", "test"))
 
     tks_seq_len = (7, 3)
@@ -321,24 +321,24 @@ def vectorize_args_ret(output_path: str):
 
     # Identifiers
     logger.info("[arg][identifiers] Generating vectors")
-    process_datapoints(train_param_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'identifiers_', 'param_train', id_trans_func_param)
-    process_datapoints(valid_param_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'identifiers_', 'param_valid', id_trans_func_param)
+    # process_datapoints(train_param_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'identifiers_', 'param_train', id_trans_func_param)
+    # process_datapoints(valid_param_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'identifiers_', 'param_valid', id_trans_func_param)
     process_datapoints(test_param_df,
                        os.path.join(output_path, "vectors", "test"),
                        'identifiers_', 'param_test', id_trans_func_param)
     
     # Tokens
     logger.info("[arg][code tokens] Generating vectors")
-    process_datapoints(train_param_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'tokens_', 'param_train', token_trans_func_param)
-    process_datapoints(valid_param_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'tokens_', 'param_valid', token_trans_func_param)
+    # process_datapoints(train_param_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'tokens_', 'param_train', token_trans_func_param)
+    # process_datapoints(valid_param_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'tokens_', 'param_valid', token_trans_func_param)
     process_datapoints(test_param_df,
                        os.path.join(output_path, "vectors", "test"),
                        'tokens_', 'param_test', token_trans_func_param)
@@ -350,24 +350,24 @@ def vectorize_args_ret(output_path: str):
 
     # Identifiers
     logger.info("[ret][identifiers] Generating vectors")
-    process_datapoints(train_return_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'identifiers_', 'ret_train', id_trans_func_ret)
-    process_datapoints(valid_return_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'identifiers_', 'ret_valid', id_trans_func_ret)
+    # process_datapoints(train_return_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'identifiers_', 'ret_train', id_trans_func_ret)
+    # process_datapoints(valid_return_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'identifiers_', 'ret_valid', id_trans_func_ret)
     process_datapoints(test_return_df,
                        os.path.join(output_path, "vectors", "test"),
                        'identifiers_', 'ret_test', id_trans_func_ret)
 
     # Tokens
     logger.info("[ret][code tokens] Generating vectors")
-    process_datapoints(train_return_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'tokens_', 'ret_train', token_trans_func_ret)
-    process_datapoints(valid_return_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'tokens_', 'ret_valid', token_trans_func_ret)
+    # process_datapoints(train_return_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'tokens_', 'ret_train', token_trans_func_ret)
+    # process_datapoints(valid_return_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'tokens_', 'ret_valid', token_trans_func_ret)
     process_datapoints(test_return_df,
                        os.path.join(output_path, "vectors", "test"),
                        'tokens_', 'ret_test', token_trans_func_ret)
@@ -379,43 +379,43 @@ def vectorize_args_ret(output_path: str):
 
     # Identifiers
     logger.info("[var][identifiers] Generating vectors")
-    process_datapoints(train_var_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'identifiers_', 'var_train', id_trans_func_var)
-    process_datapoints(valid_var_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'identifiers_', 'var_valid', id_trans_func_var)
+    # process_datapoints(train_var_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'identifiers_', 'var_train', id_trans_func_var)
+    # process_datapoints(valid_var_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'identifiers_', 'var_valid', id_trans_func_var)
     process_datapoints(test_var_df,
                        os.path.join(output_path, "vectors", "test"),
                        'identifiers_', 'var_test', id_trans_func_var)
 
     # Tokens
     logger.info("[var][code tokens] Generating vectors")
-    process_datapoints(train_var_df,
-                       os.path.join(output_path, "vectors", "train"),
-                       'tokens_', 'var_train', token_trans_func_var)
-    process_datapoints(valid_var_df,
-                       os.path.join(output_path, "vectors", "valid"),
-                       'tokens_', 'var_valid', token_trans_func_var)
+    # process_datapoints(train_var_df,
+    #                    os.path.join(output_path, "vectors", "train"),
+    #                    'tokens_', 'var_train', token_trans_func_var)
+    # process_datapoints(valid_var_df,
+    #                    os.path.join(output_path, "vectors", "valid"),
+    #                    'tokens_', 'var_valid', token_trans_func_var)
     process_datapoints(test_var_df,
                        os.path.join(output_path, "vectors", "test"),
                        'tokens_', 'var_test', token_trans_func_var)
     
     # Generate data points for visible type hints
     logger.info("[visible type hints] Generating vectors")
-    gen_aval_types_datapoints(train_param_df, train_return_df, train_var_df,
-                              'train', os.path.join(output_path, "vectors", "train"))
-    gen_aval_types_datapoints(valid_param_df, valid_return_df, valid_var_df,
-                              'valid', os.path.join(output_path, "vectors", "valid"))
+    # gen_aval_types_datapoints(train_param_df, train_return_df, train_var_df,
+    #                           'train', os.path.join(output_path, "vectors", "train"))
+    # gen_aval_types_datapoints(valid_param_df, valid_return_df, valid_var_df,
+    #                           'valid', os.path.join(output_path, "vectors", "valid"))
     gen_aval_types_datapoints(test_param_df, test_return_df, test_var_df,
                               'test', os.path.join(output_path, "vectors", "test"))
 
     # a flattened vector for labels
     logger.info("[true labels] Generating vectors")
-    gen_labels_vector(train_param_df, train_return_df, train_var_df,
-                      'train', os.path.join(output_path, "vectors", "train"))
-    gen_labels_vector(valid_param_df, valid_return_df, valid_var_df,
-                      'valid', os.path.join(output_path, "vectors", "valid"))
+    # gen_labels_vector(train_param_df, train_return_df, train_var_df,
+    #                   'train', os.path.join(output_path, "vectors", "train"))
+    # gen_labels_vector(valid_param_df, valid_return_df, valid_var_df,
+    #                   'valid', os.path.join(output_path, "vectors", "valid"))
     gen_labels_vector(test_param_df, test_return_df, test_var_df,
                       'test', os.path.join(output_path, "vectors", "test"))
     
