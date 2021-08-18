@@ -324,7 +324,8 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     # assert list(set(df_test['file'].tolist()).intersection(set(df_valid['file'].tolist()))) == []
 
     # Exclude variables without a type
-    processed_proj_vars = filter_var_wo_type(processed_proj_vars)
+    # we don't actually filter anything since we do not want to impose requirements to the code whose types we'd like to infer
+    # processed_proj_vars = filter_var_wo_type(processed_proj_vars)
 
     logger.info(f"Making type annotations consistent")
     # Makes type annotations consistent by removing `typing.`, `t.`, and `builtins` from a type.
@@ -344,7 +345,8 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
     processed_proj_fns_params = gen_argument_df(processed_proj_fns)
 
     # Filters out functions: (1) without a return type (2) with the return type of Any or None (3) without a return expression
-    processed_proj_fns = filter_return_dp(processed_proj_fns)
+    # we don't actually filter anything since we do not want to impose requirements to the code whose types we'd like to infer
+    # processed_proj_fns = filter_return_dp(processed_proj_fns)
     processed_proj_fns = format_df(processed_proj_fns)
 
     logger.info(f"Resolving type aliases")
@@ -361,7 +363,8 @@ def preprocess_ext_fns(output_dir: str, limit: int = None):
                                                                                                      processed_proj_fns,
                                                                                                      processed_proj_vars)
     # Exclude variables without a type
-    processed_proj_vars = filter_var_wo_type(processed_proj_vars)
+    # we don't actually filter anything since we do not want to impose requirements to the code whose types we'd like to infer
+    # processed_proj_vars = filter_var_wo_type(processed_proj_vars)
 
     processed_proj_fns, processed_proj_fns_params, le_all = encode_all_types(processed_proj_fns, processed_proj_fns_params,
                                                                              processed_proj_vars, output_dir)
