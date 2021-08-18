@@ -221,6 +221,9 @@ def encode_all_types(df_ret: pd.DataFrame, df_params: pd.DataFrame, df_vars: pd.
                      output_dir: str):
     all_types = np.concatenate((df_ret['return_type'].values, df_params['arg_type'].values,
                                 df_vars['var_type'].values), axis=0)
+    # @Temporary logging
+    logger.info(f"about to encode all types (creating a fresh new LabelEncoder). all types: {all_types}")
+    
     le_all = LabelEncoder()
     le_all.fit(all_types)
     df_ret['return_type_enc_all'] = le_all.transform(df_ret['return_type'].values)
