@@ -205,13 +205,13 @@ class TripletModel(nn.Module):
         """
         A triplet consists of anchor, positive examples and negative examples
         """
-        # return self.model(*(s.to(DEVICE) for s in a)), \
-        #        self.model(*(s.to(DEVICE) for s in p)), \
-        #        self.model(*(s.to(DEVICE) for s in n))
+        return self.model(*(s.to(DEVICE) for s in a)), \
+               self.model(*(s.to(DEVICE) for s in p)), \
+               self.model(*(s.to(DEVICE) for s in n))
 
-        return self.model(*(s for s in a)), \
-               self.model(*(s for s in p)), \
-               self.model(*(s for s in n))
+        # return self.model(*(s for s in a)), \
+        #        self.model(*(s for s in p)), \
+        #        self.model(*(s for s in n))
 
 def load_model(model_type: str, model_params: dict):
     """
